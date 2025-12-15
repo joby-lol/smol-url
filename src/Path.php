@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -35,8 +34,8 @@ readonly class Path implements Stringable
         $this->absolute = $absolute;
         $this->directory = static::resolveDirectory($directory, $absolute);
         $this->filename = $filename ?: null;
-        if ($filename === '.') throw new UrlException('Invalid filename');
-        if ($filename === '..') throw new UrlException('Invalid filename');
+        if ($filename === '.') throw new URLException('Invalid filename');
+        if ($filename === '..') throw new URLException('Invalid filename');
     }
 
     public static function fromString(string $path): static

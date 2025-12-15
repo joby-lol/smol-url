@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -22,14 +21,14 @@ class QueryTest extends TestCase
 
     public function testIntegerKey()
     {
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Query keys must be strings');
         new Query([1 => 'value']);
     }
 
     public function testArrayValue()
     {
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query value type: array');
         new Query(['key' => []]);
     }
@@ -93,7 +92,7 @@ class QueryTest extends TestCase
         $this->assertNull($query->get('non-existent'));
         $this->assertEquals('default', $query->get('non-existent', 'default'));
         // require should throw exception if value is missing
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Missing required query string: non-existent');
         $query->require('non-existent');
     }
@@ -162,7 +161,7 @@ class QueryTest extends TestCase
     {
         $query = new Query(['key' => 'value']);
         $this->assertEquals('value', $query->require('key'));
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Missing required query string: non-existent');
         $query->require('non-existent');
     }
@@ -171,7 +170,7 @@ class QueryTest extends TestCase
     {
         $query = new Query(['int' => '1', 'float' => '1.5']);
         $this->assertEquals(1, $query->getInt('int'));
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query integer: float');
         $query->getInt('float');
     }
@@ -180,7 +179,7 @@ class QueryTest extends TestCase
     {
         $query = new Query(['string' => 'abc', 'float' => '1.5']);
         $this->assertEquals(1.5, $query->getFloat('float'));
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query float: string');
         $query->getFloat('string');
     }
@@ -197,7 +196,7 @@ class QueryTest extends TestCase
     {
         $query = new Query(['int' => '1', 'float' => '1.5']);
         $this->assertEquals(1, $query->requireInt('int'));
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query integer: float');
         $query->requireInt('float');
     }
@@ -206,7 +205,7 @@ class QueryTest extends TestCase
     {
         $query = new Query(['string' => 'abc', 'float' => '1.5']);
         $this->assertEquals(1.5, $query->requireFloat('float'));
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query float: string');
         $query->requireFloat('string');
     }
@@ -216,14 +215,14 @@ class QueryTest extends TestCase
         $query = new Query(['true' => '1', 'false' => '0', 'string' => 'abc']);
         $this->assertTrue($query->requireBool('true'));
         $this->assertFalse($query->requireBool('false'));
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query boolean: string');
         $query->requireBool('string');
     }
 
     public function testInvalidNonArrayValues()
     {
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid query value type: object');
         new Query(['key' => new stdClass()]);
     }

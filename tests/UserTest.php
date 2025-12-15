@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -32,7 +31,7 @@ class UserTest extends TestCase
         $this->assertEquals('password', $user->password);
     }
 
-    public function testUrlEncoding()
+    public function testURLEncoding()
     {
         $user = new User('user with spaces', null);
         $this->assertEquals('user%20with%20spaces', (string)$user);

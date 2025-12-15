@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -20,13 +19,13 @@ class PortTest extends TestCase
 
     public function testOverMaxPort()
     {
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         new Port(65536);
     }
 
     public function testUnderMinPort()
     {
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         new Port(-1);
     }
 }

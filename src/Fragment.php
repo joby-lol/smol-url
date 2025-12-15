@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -23,7 +22,7 @@ readonly class Fragment implements Stringable
 
     /**
      * Constructing with no argument, null, or an empty string are equivalent, and all yield null in the value property
-     * and render as no fragment in a full Url.
+     * and render as no fragment in a full URL.
      *
      * @param string $value the raw value stored in the fragment, not URL encoded.
      */

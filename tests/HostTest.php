@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -64,7 +63,7 @@ class HostTest extends TestCase
 
     public function testInvalidHost()
     {
-        $this->expectException(UrlException::class);
+        $this->expectException(URLException::class);
         $this->expectExceptionMessage('Invalid host');
         new Host('....................................');
     }

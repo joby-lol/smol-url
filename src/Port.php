@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -23,12 +22,12 @@ readonly class Port implements Stringable
     /**
      * @param int<0,65535> $value the raw value stored in the port, with null indicating the default port. Must be between 0 and 65535, inclusive.
      *
-     * @throws UrlException if the port is invalid.
+     * @throws URLException if the port is invalid.
      */
     public function __construct(int $value)
     {
         // @phpstan-ignore-next-line we do want to check this at runtime
-        if ($value < 0 || $value > 65535) throw new UrlException('Invalid port');
+        if ($value < 0 || $value > 65535) throw new URLException('Invalid port');
         $this->value = $value;
     }
 

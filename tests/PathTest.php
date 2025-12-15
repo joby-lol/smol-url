@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -14,13 +13,13 @@ class PathTest extends TestCase
 {
     public function testEmptyPaths()
     {
-        // path with no arguments should be an empty path, even when absolute because the Url class handles turning it into '/'
+        // path with no arguments should be an empty path, even when absolute because the URL class handles turning it into '/'
         $path = new Path();
         $this->assertEquals('', (string)$path);
         $this->assertNull($path->filename);
         $this->assertEquals([], $path->directory);
         $this->assertTrue($path->absolute);
-        // same for an empty relative path, the Url turns it into './' as needed
+        // same for an empty relative path, the URL turns it into './' as needed
         $path = new Path(absolute: false);
         $this->assertEquals('', (string)$path);
         $this->assertNull($path->filename);

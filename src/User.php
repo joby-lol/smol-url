@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -26,12 +25,12 @@ readonly class User implements Stringable
 
     /**
      * Constructing with no argument, null, or an empty string are equivalent, and all yield null in the value property
-     * and render as no user in a full Url.
+     * and render as no user in a full URL.
      *
      * @param string      $username the raw value stored in the user, not URL encoded.
      * @param string|null $password the raw value stored in the password, not URL encoded.
      *
-     * @throws UrlException if a password is provided without a username.
+     * @throws URLException if a password is provided without a username.
      */
     public function __construct(
         string $username,

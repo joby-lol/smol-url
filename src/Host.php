@@ -1,7 +1,6 @@
 <?php
 /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
@@ -27,7 +26,7 @@ readonly class Host implements Stringable
         if (
             !filter_var($value, FILTER_VALIDATE_IP)
             && !filter_var($value, FILTER_VALIDATE_DOMAIN)
-        ) throw new UrlException('Invalid host');
+        ) throw new URLException('Invalid host');
         $this->value = $value;
     }
 

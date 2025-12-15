@@ -1,54 +1,33 @@
-<?php /*
- * Simple HTTP: https://codeberg.org/joby/php-simple-http
- * MIT License: Copyright (c) 2025 Joby Elliott
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */ /*
-* smolHTTP
-* https://github.com/joby-lol/smol-http
+<?php
+/*
+* smolURL https://github.com/joby-lol/smol-url
 * (c) 2025 Joby Elliott code@joby.lol
 * MIT License https://opensource.org/licenses/MIT
 */
-
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-/** @noinspection ALL */
-
-/** @noinspection HttpUrlsUsage */
 
 namespace Joby\Smol\URL;
 
 use PHPUnit\Framework\TestCase;
 
-class UrlTest extends TestCase
+class URLTest extends TestCase
 {
-    public function testEmptyUrl()
+    public function testEmptyURL()
     {
         // full defaults should be an absolute root path
-        $url = new Url();
+        $url = new URL();
         $this->assertEquals('/', (string)$url);
         // defaults with a relative Path should be a relative root path
-        $url = new Url(new Path(absolute: false));
+        $url = new URL(new Path(absolute: false));
         $this->assertEquals('./', (string)$url);
     }
 
     public function testNormalizingEmptyAbsolutePathToSlash()
     {
         // if a path implementation returns a blank path that is marked as absolute, it should be normalized to a slash
-        $url = new Url(new Path(absolute: true));
+        $url = new URL(new Path(absolute: true));
         $this->assertEquals('/', (string)$url);
         // this should also be the case when there are host/authority parts in front
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
         );
@@ -58,21 +37,21 @@ class UrlTest extends TestCase
     public function testRelativePathWithHost()
     {
         // when a path is relative, the host should not be included in the string, even if it is present
-        $url = new Url(
+        $url = new URL(
             new Path(filename: 'path', absolute: false),
             scheme: Scheme::HTTP,
             host: $this->mockHost('example.com'),
         );
         $this->assertEquals('path', (string)$url);
         // relative empty paths should be normalized to './' in this case
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: false),
             scheme: Scheme::HTTP,
             host: $this->mockHost('example.com'),
         );
         $this->assertEquals('./', (string)$url);
         // this should also be the case even if the scheme, port, and user are present, and it should include the query and fragment too
-        $url = new Url(
+        $url = new URL(
             new Path(filename: 'path', absolute: false),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -84,10 +63,10 @@ class UrlTest extends TestCase
         $this->assertEquals('path?arg=value#fragment', (string)$url);
     }
 
-    public function testFullUrl()
+    public function testFullURL()
     {
         // if all parts are specified, they should be included in the string
-        $url = new Url(
+        $url = new URL(
             new Path(filename: 'path', absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -102,7 +81,7 @@ class UrlTest extends TestCase
     public function testPortInclusionRules()
     {
         // HTTP port should not be included if it is the default port
-        $url = new Url(
+        $url = new URL(
             new Path(filename: 'path', absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -113,7 +92,7 @@ class UrlTest extends TestCase
         );
         $this->assertEquals('http://user:pass@example.com/path?arg=value#fragment', (string)$url);
         // HTTPS port should not be included if it is the default port
-        $url = new Url(
+        $url = new URL(
             new Path(filename: 'path', absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -125,20 +104,20 @@ class UrlTest extends TestCase
         );
         $this->assertEquals('https://user:pass@example.com/path?arg=value#fragment', (string)$url);
         // default HTTPS and HTTP ports should not be included if the scheme is empty
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
             port: $this->mockPort(443),
         );
         $this->assertEquals('//example.com/', (string)$url);
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
             port: $this->mockPort(80),
         );
         $this->assertEquals('//example.com/', (string)$url);
         // but other ports should be included for empty scheme
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
             port: $this->mockPort(1234),
@@ -148,7 +127,7 @@ class UrlTest extends TestCase
 
     public function testWithScheme()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -173,7 +152,7 @@ class UrlTest extends TestCase
 
     public function testWithUser()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -202,7 +181,7 @@ class UrlTest extends TestCase
 
     public function testWithHost()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -230,7 +209,7 @@ class UrlTest extends TestCase
 
     public function testWithPort()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -258,7 +237,7 @@ class UrlTest extends TestCase
 
     public function testWithPath()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -285,7 +264,7 @@ class UrlTest extends TestCase
 
     public function testWithFragment()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -314,7 +293,7 @@ class UrlTest extends TestCase
 
     public function testWithQuery()
     {
-        $url = new Url(
+        $url = new URL(
             new Path(absolute: true),
             $this->mockQuery(['arg' => 'value']),
             $this->mockFragment('fragment'),
@@ -343,7 +322,7 @@ class UrlTest extends TestCase
 
     public function testWithLinkStringApplied()
     {
-        $url = new Url(
+        $url = new URL(
             Path::fromString('/d1/d2/filename'),
             new Query(['a1' => 'v1']),
             new Fragment('f1'),
