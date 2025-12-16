@@ -9,7 +9,7 @@ namespace Joby\Smol\URL;
 
 class UrlFactory
 {
-    public function fromString(string $input): Url
+    public function fromString(string $input): URL
     {
         $parsed = parse_url($input);
         if (!$parsed) throw new URLException('Invalid URL: ' . htmlspecialchars($input));
@@ -62,7 +62,7 @@ class UrlFactory
             $fragment = new Fragment($parsed['fragment']);
         }
         // build the URL
-        return new Url(
+        return new URL(
             $path,
             $query,
             $fragment,
