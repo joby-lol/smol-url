@@ -10,8 +10,7 @@ namespace Joby\Smol\URL;
 use Stringable;
 
 /**
- * Class for storing a URL fragment. This is the part of the URL after the # symbol. Instantiating with no argument,
- * null, or an empty string are equivalent.
+ * Class for storing a URL fragment. This is the part of the URL after the # symbol. Instantiating with no argument, null, or an empty string are equivalent.
  */
 readonly class Fragment implements Stringable
 {

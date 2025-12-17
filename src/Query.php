@@ -10,9 +10,7 @@ namespace Joby\Smol\URL;
 use Stringable;
 
 /**
- * Class for storing a URL query. This is the part of the URL after the ? symbol. This class limits the types of values
- * that can be stored in the query to strings, integers, floats, and booleans (represented as integers). No arrays or
- * objects are allowed, and Stringable objects will be converted to strings. Key names must also be strings.
+ * Class for storing a URL query. This is the part of the URL after the ? symbol. This class limits the types of values that can be stored in the query to strings, integers, floats, and booleans (represented as integers). No arrays or objects are allowed, and Stringable objects will be converted to strings. Key names must also be strings.
  * 
  * @phpstan-consistent-constructor
  */
