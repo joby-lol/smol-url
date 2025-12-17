@@ -1,14 +1,30 @@
 <?php
-/*
-* smolURL https://github.com/joby-lol/smol-url
-* (c) 2025 Joby Elliott code@joby.lol
-* MIT License https://opensource.org/licenses/MIT
-*/
+
+/**
+ * smolURL
+ * https://github.com/joby-lol/smol-url
+ * (c) 2025 Joby Elliott code@joby.lol
+ * MIT License https://opensource.org/licenses/MIT
+ */
 
 namespace Joby\Smol\URL;
 
-class UrlFactory
+/**
+ * @implements UrlFactoryInterface<URL>
+ */
+class UrlFactory implements UrlFactoryInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function fromUrl(URL $url): URL
+    {
+        return clone $url;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fromString(string $input): URL
     {
         $parsed = parse_url($input);
