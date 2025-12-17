@@ -139,6 +139,7 @@ readonly class UrlFactory implements UrlFactoryInterface
 
     protected function generateBaseURL(): URL
     {
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? null;
         return new URL(
             new Path(),
             null,
@@ -146,7 +147,7 @@ readonly class UrlFactory implements UrlFactoryInterface
             $this->generateBaseURLScheme(),
             null,
             // @phpstan-ignore-next-line we're trusting the Host constructor to validate this
-            $_SERVER['SERVER_NAME'] ? new Host($_SERVER['SERVER_NAME']) : null,
+            $host ? new Host($host) : null,
             // @phpstan-ignore-next-line we're trusting the Port constructor to validate this
             $_SERVER['SERVER_PORT'] ? new Port($_SERVER['SERVER_PORT']) : null,
         );
