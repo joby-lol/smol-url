@@ -30,8 +30,10 @@ readonly class Query implements Stringable
     {
         $built_args = [];
         foreach ($args as $key => $value) {
-            if (!is_string($key)) throw new URLException('Query keys must be strings'); // @phpstan-ignore-line we do want to check this at runtime
-            if (is_array($value)) throw new URLException('Invalid query value type: array'); // @phpstan-ignore-line we do want to check this at runtime
+            if (!is_string($key)) // @phpstan-ignore-line we do want to check this at runtime
+                throw new QueryException('Query keys must be strings');
+            if (is_array($value)) // @phpstan-ignore-line we do want to check this at runtime
+                throw new QueryException('Invalid query value type: array');
             if (is_null($value)) continue;
             if (is_bool($value)) {
                 $built_args[$key] = $value ? '1' : '0';
@@ -46,7 +48,7 @@ readonly class Query implements Stringable
                 continue;
             }
             if (!is_scalar($value)) { // @phpstan-ignore-line we do want to check this at runtime
-                throw new URLException('Invalid query value type: ' . gettype($value));
+                throw new QueryException('Invalid query value type: ' . gettype($value));
             }
             $built_args[$key] = (string)$value;
         }
@@ -116,7 +118,7 @@ readonly class Query implements Stringable
 
     public function require(string $key): string
     {
-        return $this->args[$key] ?? throw new URLException('Missing required query string: ' . htmlspecialchars($key));
+        return $this->args[$key] ?? throw new QueryException('Missing required query string: ' . htmlspecialchars($key));
     }
 
     public function getInt(string $key, int|null $default = null): int|null
@@ -124,14 +126,16 @@ readonly class Query implements Stringable
         $value = $this->args[$key] ?? $default;
         if (is_null($value)) return null;
         $value = (int)$value;
-        if ($value != $this->args[$key]) throw new URLException('Invalid query integer: ' . htmlspecialchars($key));
+        if ($value != $this->args[$key])
+            throw new QueryException('Invalid query integer: ' . htmlspecialchars($key));
         return $value;
     }
 
     public function requireInt(string $key): int
     {
         $value = $this->getInt($key);
-        if (is_null($value)) throw new URLException('Missing required query integer: ' . htmlspecialchars($key));
+        if (is_null($value))
+            throw new QueryException('Missing required query integer: ' . htmlspecialchars($key));
         return $value;
     }
 
@@ -141,13 +145,15 @@ readonly class Query implements Stringable
         if (is_null($value)) return null;
         if ($value === '0') return false;
         elseif ($value === '1') return true;
-        else throw new URLException('Invalid query boolean: ' . htmlspecialchars($key));
+        else
+            throw new QueryException('Invalid query boolean: ' . htmlspecialchars($key));
     }
 
     public function requireBool(string $key): bool
     {
         $value = $this->getBool($key);
-        if (is_null($value)) throw new URLException('Missing required query boolean: ' . htmlspecialchars($key));
+        if (is_null($value))
+            throw new QueryException('Missing required query boolean: ' . htmlspecialchars($key));
         return $value;
     }
 
@@ -156,14 +162,16 @@ readonly class Query implements Stringable
         $value = $this->args[$key] ?? $default;
         if (is_null($value)) return null;
         $value = (float)$value;
-        if ($value != $this->args[$key]) throw new URLException('Invalid query float: ' . htmlspecialchars($key));
+        if ($value != $this->args[$key])
+            throw new QueryException('Invalid query float: ' . htmlspecialchars($key));
         return $value;
     }
 
     public function requireFloat(string $key): float
     {
         $value = $this->getFloat($key);
-        if (is_null($value)) throw new URLException('Missing required query float: ' . htmlspecialchars($key));
+        if (is_null($value))
+            throw new QueryException('Missing required query float: ' . htmlspecialchars($key));
         return $value;
     }
 
