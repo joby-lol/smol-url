@@ -132,8 +132,9 @@ readonly class UrlFactory implements UrlFactoryInterface
     {
         /** @var string $request_uri */
         $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
-        $script_name = $_SERVER['SCRIPT_NAME'];
-        if (str_starts_with($request_uri, $script_name)) {
+        /** @var string $script_name */
+        $script_name = $_SERVER['SCRIPT_NAME'] ?? '';
+        if ($script_name && str_starts_with($request_uri, $script_name)) {
             $request_uri = substr($request_uri, strlen($script_name));
         }
         if (strpos($request_uri, '?') !== false) {
