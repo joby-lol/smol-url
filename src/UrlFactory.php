@@ -14,6 +14,7 @@ namespace Joby\Smol\URL;
  */
 readonly class UrlFactory implements UrlFactoryInterface
 {
+
     protected URL $base_url;
 
     /**
@@ -54,18 +55,22 @@ readonly class UrlFactory implements UrlFactoryInterface
     public function fromString(string $input): URL
     {
         $parsed = parse_url($input);
-        if (!$parsed) throw new URLException('Invalid URL: ' . htmlspecialchars($input));
+        if (!$parsed)
+            throw new URLException('Invalid URL: ' . htmlspecialchars($input));
         // pull out scheme
         if (!isset($parsed['scheme'])) {
             $scheme = null;
-        } else {
+        }
+        else {
             $scheme = Scheme::tryFrom($parsed['scheme']);
-            if (!$scheme) throw new URLException('Invalid URL scheme: ' . htmlspecialchars($parsed['scheme']));
+            if (!$scheme)
+                throw new URLException('Invalid URL scheme: ' . htmlspecialchars($parsed['scheme']));
         }
         // pull out user
         if (!isset($parsed['user'])) {
             $user = null;
-        } else {
+        }
+        else {
             $user = new User(
                 $parsed['user'],
                 $parsed['pass'] ?? null,
@@ -74,33 +79,38 @@ readonly class UrlFactory implements UrlFactoryInterface
         // pull out host
         if (!isset($parsed['host'])) {
             $host = null;
-        } else {
+        }
+        else {
             $host = new Host($parsed['host']);
         }
         // pull out port
         if (!isset($parsed['port'])) {
             $port = null;
-        } else {
+        }
+        else {
             $port = new Port($parsed['port']);
         }
         // pull out path
         if (isset($parsed['path'])) {
             $path = Path::fromString($parsed['path']);
-        } else {
+        }
+        else {
             // unspecified path is not absolute
             $path = new Path(absolute: false);
         }
         // pull out query
         if (!isset($parsed['query'])) {
             $query = null;
-        } else {
+        }
+        else {
             parse_str($parsed['query'], $query);
             $query = new Query($query); // @phpstan-ignore-line there's validation in Query constructor
         }
         // pull out fragment
         if (!isset($parsed['fragment'])) {
             $fragment = null;
-        } else {
+        }
+        else {
             $fragment = new Fragment($parsed['fragment']);
         }
         // build the URL
@@ -122,6 +132,10 @@ readonly class UrlFactory implements UrlFactoryInterface
     {
         /** @var string $request_uri */
         $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $script_name = $_SERVER['SCRIPT_NAME'];
+        if (str_starts_with($request_uri, $script_name)) {
+            $request_uri = substr($request_uri, strlen($script_name));
+        }
         if (strpos($request_uri, '?') !== false) {
             $request_uri = substr($request_uri, 0, strpos($request_uri, '?'));
         }
@@ -160,4 +174,5 @@ readonly class UrlFactory implements UrlFactoryInterface
         }
         return Scheme::HTTP;
     }
+
 }
