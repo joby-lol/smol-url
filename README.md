@@ -15,6 +15,12 @@ Key features:
 - **Link resolution**: Built-in support for resolving relative links (like HTML `<a>` tags)
 - **Clean API**: All components implement `Stringable` for easy conversion to strings
 
+## Installation
+
+```bash
+composer require joby/smol-url
+```
+
 ## Basic usage
 
 ### Creating URLs
@@ -137,8 +143,10 @@ echo $url; // "/dir1/dir2/page.html#section"
 
 - **Immutable only**: All components are readonly and immutable. You cannot modify a URL or its components in place; you must use the `with*()` methods to create new instances with your changes.
 
-## Installation
+## Requirements
 
-```bash
-composer require joby/smol-url
-```
+Fully tested on PHP 8.3+, static analysis for PHP 8.2+.
+
+## License
+
+MIT License - See [LICENSE](LICENSE) file for details.
