@@ -17,16 +17,16 @@ use Stringable;
  * 
  * @phpstan-consistent-constructor
  */
-readonly class URL implements Stringable
+class URL implements Stringable
 {
     public function __construct(
-        public Path $path = new Path(),
-        public Query|null $query = null,
-        public Fragment|null $fragment = null,
-        public BackedEnum|null $scheme = null,
-        public User|null $user = null,
-        public Host|null $host = null,
-        public Port|null $port = null,
+        public readonly Path $path = new Path(),
+        public readonly Query|null $query = null,
+        public readonly Fragment|null $fragment = null,
+        public readonly BackedEnum|null $scheme = null,
+        public readonly User|null $user = null,
+        public readonly Host|null $host = null,
+        public readonly Port|null $port = null,
     ) {}
 
     /**

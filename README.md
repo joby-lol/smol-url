@@ -145,7 +145,7 @@ echo $url; // "/dir1/dir2/page.html#section"
 
 ## Requirements
 
-Fully tested on PHP 8.3+, static analysis for PHP 8.2+.
+Fully tested on PHP 8.3+, static analysis for PHP 8.1+.
 
 ## License
 

@@ -14,16 +14,17 @@ use Stringable;
 /**
  * Class for storing a URL user and optional password. This is the part of the URL before the @ symbol.
  */
-readonly class User implements Stringable
+class User implements Stringable
 {
     /**
      * @var string $username the raw value stored in the user, not URL encoded.
      */
-    public string $username;
+    public readonly string $username;
+
     /**
      * @var string|null $password the raw value stored in the password, not URL encoded.
      */
-    public string|null $password;
+    public readonly string|null $password;
 
     /**
      * Constructing with no argument, null, or an empty string are equivalent, and all yield null in the value property

@@ -16,12 +16,12 @@ use Stringable;
  * 
  * @phpstan-consistent-constructor
  */
-readonly class Query implements Stringable
+class Query implements Stringable
 {
     /**
      * @var array<string,string>
      */
-    public array $args;
+    public readonly array $args;
 
     /**
      * @param array<string,string|Stringable|int|float|bool|null> $args

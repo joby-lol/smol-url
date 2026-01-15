@@ -14,9 +14,10 @@ use Stringable;
 /**
  * Class for storing a URL host. This is the part of the URL after the // symbol.
  */
-readonly class Host implements Stringable
+class Host implements Stringable
 {
-    public string $value;
+
+    public readonly string $value;
 
     /**
      * @param string $value      the raw value stored in the host, not URL encoded. Must be a valid IP or hostname if

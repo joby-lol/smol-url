@@ -12,10 +12,10 @@ namespace Joby\Smol\URL;
 /**
  * @implements UrlFactoryInterface<URL>
  */
-readonly class UrlFactory implements UrlFactoryInterface
+class UrlFactory implements UrlFactoryInterface
 {
 
-    protected URL $base_url;
+    protected readonly URL $base_url;
 
     /**
      * @inheritDoc

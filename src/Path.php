@@ -16,15 +16,14 @@ use Stringable;
  * 
  * @phpstan-consistent-constructor
  */
-readonly class Path implements Stringable
+class Path implements Stringable
 {
     /** @var bool $absolute whether the path is absolute or relative */
-    public bool $absolute;
+    public readonly bool $absolute;
     /** @var array<string> $directory raw unencoded directory folder names */
-    public array $directory;
+    public readonly array $directory;
     /** @var string|null $filename raw unencoded filename */
-    public string|null $filename;
-
+    public readonly string|null $filename;
     /**
      * @param array<string> $directory  the directory parts of the path, unencoded
      */

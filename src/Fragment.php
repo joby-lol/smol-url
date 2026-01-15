@@ -14,12 +14,8 @@ use Stringable;
 /**
  * Class for storing a URL fragment. This is the part of the URL after the # symbol. Instantiating with no argument, null, or an empty string are equivalent.
  */
-readonly class Fragment implements Stringable
+class Fragment implements Stringable
 {
-    /**
-     * @var string $value the raw value stored in the fragment, not URL encoded.
-     */
-    public string $value;
 
     /**
      * Constructing with no argument, null, or an empty string are equivalent, and all yield null in the value property
@@ -28,9 +24,8 @@ readonly class Fragment implements Stringable
      * @param string $value the raw value stored in the fragment, not URL encoded.
      */
     public function __construct(
-        string $value,
+        public readonly string $value,
     ) {
-        $this->value = $value;
     }
 
     public function __toString(): string
