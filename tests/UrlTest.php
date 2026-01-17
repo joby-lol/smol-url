@@ -10,6 +10,7 @@
 namespace Joby\Smol\URL;
 
 use PHPUnit\Framework\TestCase;
+use Stringable;
 
 class URLTest extends TestCase
 {
@@ -394,6 +395,168 @@ class URLTest extends TestCase
             '/d4/filename2',
             (string)$url->withLinkStringApplied('/d4/filename2'),
         );
+    }
+
+    public function testUrlQueryHelperMethods()
+    {
+        $url = new URL(
+            new Path(absolute: true),
+            new Query(['a' => '1']),
+        );
+
+        $withArg = $url->withArg('b', '2');
+        $this->assertEquals('a=1&b=2', (string) $withArg->query);
+        $this->assertEquals('a=1', (string) $url->query);
+
+        $key =
+
+            new class implements Stringable {
+
+            public function __toString(): string
+            {
+                return 'c';
+            }
+
+            };
+        $value =
+
+            new class implements Stringable {
+
+            public function __toString(): string
+            {
+                return '3';
+            }
+
+            };
+        $withStringable = $withArg->withArg($key, $value);
+        $this->assertEquals('a=1&b=2&c=3', (string) $withStringable->query);
+
+        $withoutArg = $withStringable->withoutArg('a');
+        $this->assertEquals('b=2&c=3', (string) $withoutArg->query);
+        $this->assertEquals('a=1&b=2&c=3', (string) $withStringable->query);
+
+        $withArgs = $withoutArg->withArgs(['d' => 4, 'e' => true, 'b' => '22']);
+        $this->assertEquals('b=22&c=3&d=4&e=1', (string) $withArgs->query);
+
+        $withoutArgs = $withArgs->withoutArgs(['b', 'd']);
+        $this->assertEquals('c=3&e=1', (string) $withoutArgs->query);
+    }
+
+    public function testUrlQueryHelperMethodsWhenNoQuery()
+    {
+        $url = new URL(new Path(absolute: true));
+
+        $same = $url->withoutArg('x');
+        $this->assertSame($url, $same);
+
+        $same2 = $url->withoutArgs(['x', 'y']);
+        $this->assertSame($url, $same2);
+
+        $withArg = $url->withArg('a', '1');
+        $this->assertEquals('a=1', (string) $withArg->query);
+
+        $withArgs = $url->withArgs(['b' => '2']);
+        $this->assertEquals('b=2', (string) $withArgs->query);
+    }
+
+    public function testWithSchemeAcceptsStringAndStringable()
+    {
+        $url = new URL(new Path(absolute: true));
+
+        $https = $url->withScheme('HTTPS');
+        $this->assertEquals(Scheme::HTTPS, $https->scheme);
+
+        $http = $url->withScheme(
+
+            new class implements Stringable {
+
+            public function __toString(): string
+            {
+                return 'http';
+            }
+
+            },
+        );
+        $this->assertEquals(Scheme::HTTP, $http->scheme);
+    }
+
+    public function testWithHostAcceptsStringAndStringable()
+    {
+        $url = new URL(new Path(absolute: true));
+
+        $fromString = $url->withHost('Example.com');
+        $this->assertEquals('example.com', (string) $fromString->host);
+
+        $fromStringable = $url->withHost(
+
+            new class implements Stringable {
+
+            public function __toString(): string
+            {
+                return 'example.com';
+            }
+
+            },
+        );
+        $this->assertEquals('example.com', (string) $fromStringable->host);
+    }
+
+    public function testWithPortAcceptsInt()
+    {
+        $url = new URL(new Path(absolute: true));
+        $withPort = $url->withPort(8080);
+        $this->assertEquals('8080', (string) $withPort->port);
+    }
+
+    public function testWithFragmentAcceptsStringAndStringable()
+    {
+        $url = new URL(new Path(absolute: true));
+
+        $fromString = $url->withFragment('frag');
+        $this->assertEquals('frag', (string) $fromString->fragment);
+
+        $fromStringable = $url->withFragment(
+
+            new class implements Stringable {
+
+            public function __toString(): string
+            {
+                return 'frag2';
+            }
+
+            },
+        );
+        $this->assertEquals('frag2', (string) $fromStringable->fragment);
+    }
+
+    public function testWithQueryAcceptsArray()
+    {
+        $url = new URL(new Path(absolute: true));
+        $withQuery = $url->withQuery(['a' => '1', 'b' => 2]);
+        $this->assertEquals('a=1&b=2', (string) $withQuery->query);
+    }
+
+    public function testWithPathAcceptsStringAndStringable()
+    {
+        $url = new URL(new Path(absolute: true));
+
+        $fromString = $url->withPath('/a');
+        $this->assertTrue($fromString->path->absolute);
+        $this->assertEquals('a', (string) $fromString->path);
+
+        $fromStringable = $url->withPath(
+
+            new class implements Stringable {
+
+            public function __toString(): string
+            {
+                return 'b/c';
+            }
+
+            },
+        );
+        $this->assertFalse($fromStringable->path->absolute);
+        $this->assertEquals('b/c', (string) $fromStringable->path);
     }
 
     protected function mockFragment(string|null $fragment = null): Fragment

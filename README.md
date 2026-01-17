@@ -13,6 +13,7 @@ Key features:
 - **Component-based**: Each URL part (Path, Query, Fragment, Scheme, Host, Port, User) is a separate class
 - **Security-focused**: Intentionally limited to HTTP/HTTPS schemes to prevent arbitrary scheme parsing
 - **Link resolution**: Built-in support for resolving relative links (like HTML `<a>` tags)
+- **Parsing & factories**: Parse strings or globals and compose URLs against a base URL
 - **Clean API**: All components implement `Stringable` for easy conversion to strings
 
 ## Installation
@@ -22,6 +23,21 @@ composer require joby/smol-url
 ```
 
 ## Basic usage
+
+### Quick start
+
+```php
+use Joby\Smol\URL\{URL, Path, Query, Scheme, Host};
+
+$url = new URL(
+    Path::fromString('/docs'),
+    new Query(['q' => 'smol']),
+    scheme: Scheme::HTTPS,
+    host: new Host('example.com')
+);
+
+echo $url; // "https://example.com/docs?q=smol"
+```
 
 ### Creating URLs
 
@@ -47,6 +63,24 @@ echo $url; // "https://username:password@example.com:8080/dir1/dir2/file.php?key
 // Relative paths
 $url = new URL(new Path(filename: 'page.html', absolute: false));
 echo $url; // "page.html"
+```
+
+### Parsing URLs
+
+```php
+use Joby\Smol\URL\{UrlFactory, URL};
+
+$factory = new UrlFactory();
+
+// From string
+$url = $factory->fromString('https://example.com/path?x=1#frag');
+
+// From globals (REQUEST_URI, HOST, etc.)
+$current = $factory->fromGlobals();
+
+// Merge a URL with the factory base URL
+$base = $factory->baseUrl();
+$composed = $factory->fromUrl(new URL(path: $base->path));
 ```
 
 ### Working with paths
@@ -106,6 +140,39 @@ echo $url;   // "http://example.com/page?id=123"
 echo $https; // "https://example.com/page?id=123"
 ```
 
+#### URL query helpers
+
+To make query edits less verbose, URL exposes helper methods that delegate to the `Query` object and return new URLs:
+
+```php
+$url = new URL(
+    Path::fromString('/page'),
+    new Query(['a' => '1']),
+    scheme: Scheme::HTTP,
+    host: new Host('example.com')
+);
+
+$url = $url->withArg('b', 2);            // adds/updates a single arg
+$url = $url->withArgs(['c' => true]);    // adds/updates multiple args
+$url = $url->withoutArg('a');            // removes one arg
+$url = $url->withoutArgs(['b', 'c']);    // removes multiple args
+```
+
+#### Permissive `with*()` inputs
+
+Several `with*()` methods accept additional input types for convenience:
+
+```php
+$url = new URL(new Path(absolute: true));
+
+$url = $url->withScheme('https');        // string or Stringable
+$url = $url->withHost('example.com');    // string or Stringable
+$url = $url->withPort(8080);             // int
+$url = $url->withFragment('section');    // string or Stringable
+$url = $url->withQuery(['a' => '1']);    // array
+$url = $url->withPath('/docs');          // string or Stringable
+```
+
 ### Resolving relative links
 
 URLs include a `withLinkStringApplied()` method that allows updating URLs using a variety of relative URL strings, including relative paths, fragments, and both partial and full query string updates.
@@ -133,14 +200,20 @@ $url = $base->withLinkStringApplied('#section');
 echo $url; // "/dir1/dir2/page.html#section"
 ```
 
+## Validation and encoding
+
+- **Host validation**: `Host` validates IP addresses and domain names.
+- **Path normalization**: `Path` resolves `.` and `..` segments and rejects `.` or `..` filenames.
+- **Encoding**: `Path` and `Fragment` encode their values for safe URL output; `Query` uses `http_build_query()` for encoding.
+
+## Error handling
+
+Invalid inputs throw `URLException` or `QueryException` depending on the component. For example, invalid host names, query value types, or missing required query keys will raise exceptions.
+
 ## Limitations
 
 - **HTTP/HTTPS only**: The library intentionally only supports HTTP and HTTPS schemes. This is a security feature to prevent parsing of arbitrary schemes like `javascript:`, `data:`, etc. (It does strictly allow using any backed enum as the scheme, so you could extend it to support more schemes if you like.)
-
 - **No query parameter arrays**: Query parameters are limited to scalar types (strings, integers, floats, booleans). Arrays and objects are not supported to keep the implementation simple and focused.
-
-- **PHP 8.3+ required**: The library uses modern PHP features including readonly classes, typed properties, and the `BackedEnum` type, requiring PHP 8.3 or higher.
-
 - **Immutable only**: All components are readonly and immutable. You cannot modify a URL or its components in place; you must use the `with*()` methods to create new instances with your changes.
 
 ## Requirements
