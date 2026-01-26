@@ -9,6 +9,7 @@
 
 namespace Joby\Smol\URL;
 
+use Joby\Smol\Cast\CastingGettersTrait;
 use Stringable;
 
 /**
@@ -18,6 +19,9 @@ use Stringable;
  */
 class Query implements Stringable
 {
+
+    use CastingGettersTrait;
+
     /**
      * @var array<string,string>
      */
@@ -121,62 +125,32 @@ class Query implements Stringable
         return $this->args[$key] ?? throw new QueryException('Missing required query string: ' . htmlspecialchars($key));
     }
 
-    public function getInt(string $key, int|null $default = null): int|null
-    {
-        $value = $this->args[$key] ?? $default;
-        if (is_null($value)) return null;
-        $value = (int)$value;
-        if ($value != $this->args[$key])
-            throw new QueryException('Invalid query integer: ' . htmlspecialchars($key));
-        return $value;
-    }
-
-    public function requireInt(string $key): int
-    {
-        $value = $this->getInt($key);
-        if (is_null($value))
-            throw new QueryException('Missing required query integer: ' . htmlspecialchars($key));
-        return $value;
-    }
-
-    public function getBool(string $key, bool|null $default = null): bool|null
-    {
-        $value = $this->args[$key] ?? $default;
-        if (is_null($value)) return null;
-        if ($value === '0') return false;
-        elseif ($value === '1') return true;
-        else
-            throw new QueryException('Invalid query boolean: ' . htmlspecialchars($key));
-    }
-
-    public function requireBool(string $key): bool
-    {
-        $value = $this->getBool($key);
-        if (is_null($value))
-            throw new QueryException('Missing required query boolean: ' . htmlspecialchars($key));
-        return $value;
-    }
-
-    public function getFloat(string $key, float|null $default = null): float|null
-    {
-        $value = $this->args[$key] ?? $default;
-        if (is_null($value)) return null;
-        $value = (float)$value;
-        if ($value != $this->args[$key])
-            throw new QueryException('Invalid query float: ' . htmlspecialchars($key));
-        return $value;
-    }
-
-    public function requireFloat(string $key): float
-    {
-        $value = $this->getFloat($key);
-        if (is_null($value))
-            throw new QueryException('Missing required query float: ' . htmlspecialchars($key));
-        return $value;
-    }
-
     public function has(string $key): bool
     {
         return isset($this->args[$key]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function createCastException(string $type, string $name, \Throwable $previous): \Throwable
+    {
+        return new QueryException('Invalid query ' . $type . ': ' . $name, previous: $previous);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function createRequiredException(string $type, string $name): \Throwable
+    {
+        return new QueryException('Missing required query ' . $type . ': ' . $name);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getCastableValue(string $key): mixed
+    {
+        return $this->get($key);
     }
 }

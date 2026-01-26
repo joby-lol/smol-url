@@ -173,7 +173,7 @@ class QueryTest extends TestCase
         $query = new Query(['int' => '1', 'float' => '1.5']);
         $this->assertEquals(1, $query->getInt('int'));
         $this->expectException(QueryException::class);
-        $this->expectExceptionMessage('Invalid query integer: float');
+        $this->expectExceptionMessage('Invalid query int: float');
         $query->getInt('float');
     }
 
@@ -199,7 +199,7 @@ class QueryTest extends TestCase
         $query = new Query(['int' => '1', 'float' => '1.5']);
         $this->assertEquals(1, $query->requireInt('int'));
         $this->expectException(QueryException::class);
-        $this->expectExceptionMessage('Invalid query integer: float');
+        $this->expectExceptionMessage('Invalid query int: float');
         $query->requireInt('float');
     }
 
@@ -218,7 +218,7 @@ class QueryTest extends TestCase
         $this->assertTrue($query->requireBool('true'));
         $this->assertFalse($query->requireBool('false'));
         $this->expectException(QueryException::class);
-        $this->expectExceptionMessage('Invalid query boolean: string');
+        $this->expectExceptionMessage('Invalid query bool: string');
         $query->requireBool('string');
     }
 
