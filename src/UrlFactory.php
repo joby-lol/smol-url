@@ -155,6 +155,7 @@ class UrlFactory implements UrlFactoryInterface
     protected function generateBaseURL(): URL
     {
         $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? null;
+        $host = preg_replace('/:[0-9]+$/', '', $host);
         return new URL(
             new Path(),
             null,
