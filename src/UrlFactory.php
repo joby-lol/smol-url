@@ -9,6 +9,8 @@
 
 namespace Joby\Smol\URL;
 
+use RuntimeException;
+
 /**
  * @implements UrlFactoryInterface<URL>
  */
@@ -155,8 +157,11 @@ class UrlFactory implements UrlFactoryInterface
     protected function generateBaseURL(): URL
     {
         $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? null;
-        if ($host)
-            $host = preg_replace('/:[0-9]+$/', '', $host) ?: null;
+        if (is_string($host)) {
+            $host = preg_replace('/:[0-9]+$/', '', $host);
+            if (!is_string($host))
+                throw new RuntimeException('Error parsing host while generating base URL');
+        }
         return new URL(
             new Path(),
             null,
