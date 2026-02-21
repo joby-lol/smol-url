@@ -111,11 +111,11 @@ class URL implements Stringable
         if (!$link)
             return $this;
         // first explode by # to separate fragment if it exists
-        list($text, $fragment) = explode('#', $link, 2);
+        @list($text, $fragment) = explode('#', $link, 2);
         // then explode by ? to separate full query if it exists
-        list($text, $full_query_string) = explode('?', $text, 2);
+        @list($text, $full_query_string) = explode('?', $text, 2);
         // then explode by & to separate partial query if it exists
-        list($path, $partial_query_string) = explode('&', $text, 2);
+        @list($path, $partial_query_string) = explode('&', $text, 2);
         // then apply everything to build a new URL
         $output = $this;
         // start by building fragment object if necessary
