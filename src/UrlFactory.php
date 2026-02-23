@@ -171,7 +171,7 @@ class UrlFactory implements UrlFactoryInterface
             // @phpstan-ignore-next-line we're trusting the Host constructor to validate this
             $host ? new Host($host) : null,
             // @phpstan-ignore-next-line we're trusting the Port constructor to validate this
-            $_SERVER['SERVER_PORT'] ? new Port($_SERVER['SERVER_PORT']) : null,
+            isset($_SERVER['SERVER_PORT']) ? new Port($_SERVER['SERVER_PORT']) : null,
         );
     }
 
