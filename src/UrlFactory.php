@@ -177,7 +177,7 @@ class UrlFactory implements UrlFactoryInterface
 
     protected function generateBaseURLScheme(): Scheme
     {
-        if (@$_SERVER['HTTPS'] === 'on') {
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
             return Scheme::HTTPS;
         }
         return Scheme::HTTP;
