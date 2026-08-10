@@ -110,17 +110,20 @@ class URL implements Stringable
     {
         if (!$link)
             return $this;
+        // start building new URL
+        $output = $this;
         // first explode by # to separate fragment if it exists
         @list($text, $fragment) = explode('#', $link, 2);
+        // start by building fragment object if necessary
+        $fragment = $fragment ? new Fragment($fragment) : null;
+        $output = $output->withFragment($fragment);
+        // if only a fragment was provided then we're done
+        if (!$text)
+            return $output;
         // then explode by ? to separate full query if it exists
         @list($text, $full_query_string) = explode('?', $text, 2);
         // then explode by & to separate partial query if it exists
         @list($path, $partial_query_string) = explode('&', $text, 2);
-        // then apply everything to build a new URL
-        $output = $this;
-        // start by building fragment object if necessary
-        $fragment = $fragment ? new Fragment($fragment) : null;
-        $output = $output->withFragment($fragment);
         // then build query object if necessary
         if ($full_query_string) {
             parse_str($full_query_string, $query);

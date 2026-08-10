@@ -14,27 +14,28 @@ use Stringable;
 
 class URLTest extends TestCase
 {
+
     public function testEmptyURL()
     {
         // full defaults should be an absolute root path
         $url = new URL();
-        $this->assertEquals('/', (string)$url);
+        $this->assertEquals('/', (string) $url);
         // defaults with a relative Path should be a relative root path
         $url = new URL(new Path(absolute: false));
-        $this->assertEquals('./', (string)$url);
+        $this->assertEquals('./', (string) $url);
     }
 
     public function testNormalizingEmptyAbsolutePathToSlash()
     {
         // if a path implementation returns a blank path that is marked as absolute, it should be normalized to a slash
         $url = new URL(new Path(absolute: true));
-        $this->assertEquals('/', (string)$url);
+        $this->assertEquals('/', (string) $url);
         // this should also be the case when there are host/authority parts in front
         $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
         );
-        $this->assertEquals('//example.com/', (string)$url);
+        $this->assertEquals('//example.com/', (string) $url);
     }
 
     public function testRelativePathWithHost()
@@ -45,14 +46,14 @@ class URLTest extends TestCase
             scheme: Scheme::HTTP,
             host: $this->mockHost('example.com'),
         );
-        $this->assertEquals('path', (string)$url);
+        $this->assertEquals('path', (string) $url);
         // relative empty paths should be normalized to './' in this case
         $url = new URL(
             new Path(absolute: false),
             scheme: Scheme::HTTP,
             host: $this->mockHost('example.com'),
         );
-        $this->assertEquals('./', (string)$url);
+        $this->assertEquals('./', (string) $url);
         // this should also be the case even if the scheme, port, and user are present, and it should include the query and fragment too
         $url = new URL(
             new Path(filename: 'path', absolute: false),
@@ -63,7 +64,7 @@ class URLTest extends TestCase
             $this->mockHost('example.com'),
             $this->mockPort(8080),
         );
-        $this->assertEquals('path?arg=value#fragment', (string)$url);
+        $this->assertEquals('path?arg=value#fragment', (string) $url);
     }
 
     public function testFullURL()
@@ -78,7 +79,7 @@ class URLTest extends TestCase
             $this->mockHost('example.com'),
             $this->mockPort(8080),
         );
-        $this->assertEquals('https://user:pass@example.com:8080/path?arg=value#fragment', (string)$url);
+        $this->assertEquals('https://user:pass@example.com:8080/path?arg=value#fragment', (string) $url);
     }
 
     public function testPortInclusionRules()
@@ -93,7 +94,7 @@ class URLTest extends TestCase
             $this->mockHost('example.com'),
             $this->mockPort(80),
         );
-        $this->assertEquals('http://user:pass@example.com/path?arg=value#fragment', (string)$url);
+        $this->assertEquals('http://user:pass@example.com/path?arg=value#fragment', (string) $url);
         // HTTPS port should not be included if it is the default port
         $url = new URL(
             new Path(filename: 'path', absolute: true),
@@ -105,27 +106,27 @@ class URLTest extends TestCase
             $this->mockPort(443),
 
         );
-        $this->assertEquals('https://user:pass@example.com/path?arg=value#fragment', (string)$url);
+        $this->assertEquals('https://user:pass@example.com/path?arg=value#fragment', (string) $url);
         // default HTTPS and HTTP ports should not be included if the scheme is empty
         $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
             port: $this->mockPort(443),
         );
-        $this->assertEquals('//example.com/', (string)$url);
+        $this->assertEquals('//example.com/', (string) $url);
         $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
             port: $this->mockPort(80),
         );
-        $this->assertEquals('//example.com/', (string)$url);
+        $this->assertEquals('//example.com/', (string) $url);
         // but other ports should be included for empty scheme
         $url = new URL(
             new Path(absolute: true),
             host: $this->mockHost('example.com'),
             port: $this->mockPort(1234),
         );
-        $this->assertEquals('//example.com:1234/', (string)$url);
+        $this->assertEquals('//example.com:1234/', (string) $url);
     }
 
     public function testWithScheme()
@@ -168,8 +169,8 @@ class URLTest extends TestCase
         $removed = $url->withUser(null);
         $unchanged = $url->withUser($url->user);
         // original URL should still be user:pass, others should be updated
-        $this->assertEquals('user:pass', (string)$url->user);
-        $this->assertEquals('newuser:newpass', (string)$changed->user);
+        $this->assertEquals('user:pass', (string) $url->user);
+        $this->assertEquals('newuser:newpass', (string) $changed->user);
         $this->assertNull($removed->user);
         // unchanged should be the same object
         $this->assertSame($url, $unchanged);
@@ -197,8 +198,8 @@ class URLTest extends TestCase
         $removed = $url->withHost(null);
         $unchanged = $url->withHost($url->host);
         // original URL should still be example.com, others should be updated
-        $this->assertEquals('example.com', (string)$url->host);
-        $this->assertEquals('changed', (string)$changed->host);
+        $this->assertEquals('example.com', (string) $url->host);
+        $this->assertEquals('changed', (string) $changed->host);
         $this->assertNull($removed->host);
         // unchanged should be the same object
         $this->assertSame($url, $unchanged);
@@ -225,8 +226,8 @@ class URLTest extends TestCase
         $removed = $url->withPort(null);
         $unchanged = $url->withPort($url->port);
         // original URL should still be 8080, others should be updated
-        $this->assertEquals('8080', (string)$url->port);
-        $this->assertEquals('8081', (string)$changed->port);
+        $this->assertEquals('8080', (string) $url->port);
+        $this->assertEquals('8081', (string) $changed->port);
         $this->assertNull($removed->port);
         // unchanged should be the same object
         $this->assertSame($url, $unchanged);
@@ -252,8 +253,8 @@ class URLTest extends TestCase
         $changed = $url->withPath(new Path(filename: 'newpath', absolute: true));
         $unchanged = $url->withPath($url->path);
         // original URL should still be /, others should be updated
-        $this->assertEquals('', (string)$url->path);
-        $this->assertEquals('newpath', (string)$changed->path);
+        $this->assertEquals('', (string) $url->path);
+        $this->assertEquals('newpath', (string) $changed->path);
         // unchanged should be the same object
         $this->assertSame($url, $unchanged);
         // everything else should be unchanged
@@ -280,8 +281,8 @@ class URLTest extends TestCase
         $removed = $url->withFragment(null);
         $unchanged = $url->withFragment($url->fragment);
         // original URL should still be #fragment, others should be updated
-        $this->assertEquals('fragment', (string)$url->fragment);
-        $this->assertEquals('newfragment', (string)$changed->fragment);
+        $this->assertEquals('fragment', (string) $url->fragment);
+        $this->assertEquals('newfragment', (string) $changed->fragment);
         $this->assertNull($removed->fragment);
         // unchanged should be the same object
         $this->assertSame($url, $unchanged);
@@ -309,8 +310,8 @@ class URLTest extends TestCase
         $removed = $url->withQuery(null);
         $unchanged = $url->withQuery($url->query);
         // original URL should still be arg=value, others should be updated
-        $this->assertEquals('arg=value', (string)$url->query);
-        $this->assertEquals('arg2=value2', (string)$changed->query);
+        $this->assertEquals('arg=value', (string) $url->query);
+        $this->assertEquals('arg2=value2', (string) $changed->query);
         $this->assertNull($removed->query);
         // unchanged should be the same object
         $this->assertSame($url, $unchanged);
@@ -333,67 +334,67 @@ class URLTest extends TestCase
         // apply a link with just a filename
         $this->assertEquals(
             '/d1/d2/filename2',
-            (string)$url->withLinkStringApplied('filename2'),
+            (string) $url->withLinkStringApplied('filename2'),
         );
         // apply a link with just a full query
         $this->assertEquals(
             '/d1/d2/filename?a2=v2',
-            (string)$url->withLinkStringApplied('?a2=v2'),
+            (string) $url->withLinkStringApplied('?a2=v2'),
         );
         // apply a link with a non-overriding partial query
         $this->assertEquals(
             '/d1/d2/filename?a1=v1&a2=v2',
-            (string)$url->withLinkStringApplied('&a2=v2'),
+            (string) $url->withLinkStringApplied('&a2=v2'),
         );
         // apply a link with an overriding partial query
         $this->assertEquals(
             '/d1/d2/filename?a1=v3&a2=v2',
-            (string)$url->withLinkStringApplied('&a1=v3&a2=v2'),
+            (string) $url->withLinkStringApplied('&a1=v3&a2=v2'),
         );
         // apply a link with just a fragment
         $this->assertEquals(
-            '/d1/d2/filename#f2',
-            (string)$url->withLinkStringApplied('#f2'),
+            '/d1/d2/filename?a1=v1#f2',
+            (string) $url->withLinkStringApplied('#f2'),
         );
         // apply ./
         $this->assertEquals(
             '/d1/d2/',
-            (string)$url->withLinkStringApplied('./'),
+            (string) $url->withLinkStringApplied('./'),
         );
         // apply ./filename2
         $this->assertEquals(
             '/d1/d2/filename2',
-            (string)$url->withLinkStringApplied('./filename2'),
+            (string) $url->withLinkStringApplied('./filename2'),
         );
         // apply ../
         $this->assertEquals(
             '/d1/',
-            (string)$url->withLinkStringApplied('../'),
+            (string) $url->withLinkStringApplied('../'),
         );
         // apply ../filename2
         $this->assertEquals(
             '/d1/filename2',
-            (string)$url->withLinkStringApplied('../filename2'),
+            (string) $url->withLinkStringApplied('../filename2'),
         );
         // apply with all parts and full query
         $this->assertEquals(
             '/d1/d2/d3/filename2?a2=v2#f2',
-            (string)$url->withLinkStringApplied('d3/filename2?a2=v2#f2'),
+            (string) $url->withLinkStringApplied('d3/filename2?a2=v2#f2'),
         );
         // apply with all parts and partial query
         $this->assertEquals(
             '/d1/d2/d3/filename2?a1=v3&a2=v2#f2',
-            (string)$url->withLinkStringApplied('d3/filename2?a1=v3&a2=v2#f2'),
+            (string) $url->withLinkStringApplied('d3/filename2?a1=v3&a2=v2#f2'),
         );
         // apply with path and fragment only
         $this->assertEquals(
             '/d1/d2/d3/filename2#f2',
-            (string)$url->withLinkStringApplied('./d3/filename2#f2'),
+            (string) $url->withLinkStringApplied('./d3/filename2#f2'),
         );
         // apply with absolute path
         $this->assertEquals(
             '/d4/filename2',
-            (string)$url->withLinkStringApplied('/d4/filename2'),
+            (string) $url->withLinkStringApplied('/d4/filename2'),
         );
     }
 
@@ -611,11 +612,14 @@ class URLTest extends TestCase
         $mock = $this->createMock(User::class);
         if ($username && $password) {
             $mock->method('__toString')->willReturn($username . ':' . $password);
-        } elseif ($username) {
+        }
+        elseif ($username) {
             $mock->method('__toString')->willReturn($username);
-        } else {
+        }
+        else {
             $mock->method('__toString')->willReturn('');
         }
         return $mock;
     }
+
 }
