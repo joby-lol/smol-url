@@ -14,8 +14,6 @@ use Stringable;
 
 /**
  * Class for storing and manipulating URLs, composed of various URL components, all of which are also represented as immutable classes.
- * 
- * @phpstan-consistent-constructor
  */
 class URL implements Stringable
 {
@@ -33,7 +31,7 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified query argument added or updated.
      */
-    public function withArg(string|Stringable $key, string|Stringable|int|float|bool|null $value): static
+    public function withArg(string|Stringable $key, string|Stringable|int|float|bool|null $value): self
     {
         $new_query = $this->query ? $this->query->withArg($key, $value) : new Query([(string) $key => $value]);
         return $this->withQuery($new_query);
@@ -42,7 +40,7 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified query argument removed.
      */
-    public function withoutArg(string|Stringable $key): static
+    public function withoutArg(string|Stringable $key): self
     {
         if (!$this->query)
             return $this;
@@ -55,7 +53,7 @@ class URL implements Stringable
      * 
      * @param array<string,string|Stringable|int|float|bool|null> $args
      */
-    public function withArgs(array $args): static
+    public function withArgs(array $args): self
     {
         $new_query = $this->query ? $this->query->withArgs($args) : new Query($args);
         return $this->withQuery($new_query);
@@ -66,7 +64,7 @@ class URL implements Stringable
      * 
      * @param array<string|Stringable> $keys
      */
-    public function withoutArgs(array $keys): static
+    public function withoutArgs(array $keys): self
     {
         if (!$this->query)
             return $this;
@@ -106,7 +104,7 @@ class URL implements Stringable
      *
      * This is intended for parsing links from HTML relative to a base URL.
      */
-    public function withLinkStringApplied(string $link): static
+    public function withLinkStringApplied(string $link): self
     {
         if (!$link)
             return $this;
@@ -156,7 +154,7 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified scheme. Should return the same object if there is no change.
      */
-    public function withScheme(Scheme|Stringable|string|null $scheme): static
+    public function withScheme(Scheme|Stringable|string|null $scheme): self
     {
         if (is_string($scheme))
             $scheme = $scheme ? Scheme::from(strtolower($scheme)) : null;
@@ -165,7 +163,7 @@ class URL implements Stringable
         if ($scheme === $this->scheme)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $this->path,
                 $this->query,
                 $this->fragment,
@@ -179,12 +177,12 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified User. Should return the same object if there is no change.
      */
-    public function withUser(User|null $user): static
+    public function withUser(User|null $user): self
     {
         if ($user === $this->user)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $this->path,
                 $this->query,
                 $this->fragment,
@@ -198,7 +196,7 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified Host. Should return the same object if there is no change.
      */
-    public function withHost(Host|Stringable|string|null $host): static
+    public function withHost(Host|Stringable|string|null $host): self
     {
         if (is_string($host))
             $host = $host ? new Host((string) $host) : null;
@@ -207,7 +205,7 @@ class URL implements Stringable
         if ($host == $this->host)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $this->path,
                 $this->query,
                 $this->fragment,
@@ -221,14 +219,14 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified Port. Should return the same object if there is no change.
      */
-    public function withPort(Port|int|null $port): static
+    public function withPort(Port|int|null $port): self
     {
         if (is_int($port))
             $port = new Port($port); // @phpstan-ignore-line we're trusting the Port constructor to validate the port number
         if ($port == $this->port)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $this->path,
                 $this->query,
                 $this->fragment,
@@ -242,7 +240,7 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified Fragment. Should return the same object if there is no change.
      */
-    public function withFragment(Fragment|string|Stringable|null $fragment): static
+    public function withFragment(Fragment|string|Stringable|null $fragment): self
     {
         if (is_string($fragment))
             $fragment = $fragment ? new Fragment((string) $fragment) : null;
@@ -251,7 +249,7 @@ class URL implements Stringable
         if ($fragment == $this->fragment)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $this->path,
                 $this->query,
                 $fragment,
@@ -267,14 +265,14 @@ class URL implements Stringable
      * 
      * @param Query|array<string,string|Stringable|int|float|bool|null>|null $query
      */
-    public function withQuery(Query|array|null $query): static
+    public function withQuery(Query|array|null $query): self
     {
         if (is_array($query))
             $query = new Query($query);
         if ($query === $this->query)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $this->path,
                 $query,
                 $this->fragment,
@@ -288,7 +286,7 @@ class URL implements Stringable
     /**
      * Return a new instance with the specified Path. Should return the same object if there is no change.
      */
-    public function withPath(Path|Stringable|string $path): static
+    public function withPath(Path|Stringable|string $path): self
     {
         if (is_string($path))
             $path = Path::fromString($path);
@@ -297,7 +295,7 @@ class URL implements Stringable
         if ($path === $this->path)
             return $this;
         else
-            return new static(
+            return $this->derive(
                 $path,
                 $this->query,
                 $this->fragment,
@@ -365,11 +363,38 @@ class URL implements Stringable
         return $port;
     }
 
+    /**
+     * Get the current URL's scheme as a string, if applicable, for full-string construction.
+     */
     protected function schemeString(): ?string
     {
         if ($this->scheme === null)
             return null;
         return (string) $this->scheme->value;
+    }
+
+    /**
+     * Internal method for allowing subclasses to intercept new object creation and do their own operations or context/data injection.
+     */
+    protected function derive(
+        Path $path = new Path(),
+        Query|null $query = null,
+        Fragment|null $fragment = null,
+        BackedEnum|null $scheme = null,
+        User|null $user = null,
+        Host|null $host = null,
+        Port|null $port = null,
+    ): self
+    {
+        return new self(
+            $path,
+            $query,
+            $fragment,
+            $scheme,
+            $user,
+            $host,
+            $port,
+        );
     }
 
 }
