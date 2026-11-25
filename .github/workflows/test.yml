@@ -19,6 +19,7 @@ jobs:
         with:
           php_version: ${{ matrix.php-versions }}
           configuration: phpunit.xml
+          php_extensions: mbstring
   static-analysis:
     runs-on: ubuntu-latest
     steps:
